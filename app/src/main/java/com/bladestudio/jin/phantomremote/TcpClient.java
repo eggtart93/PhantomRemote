@@ -4,8 +4,12 @@ import android.util.Log;
 
 import junit.framework.Assert;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -31,12 +35,14 @@ public class TcpClient {
     private static final String TAG = "TcpClient";
     private static final int TIMEOUT = 5000; // Default timeout 5 sec
     private Socket mSocket;
-    private MessageReceivedHandler mMessageHandler;
+    private MessageReceivedHandler<Packet> mMessageHandler;
     private ConnectionLostHandler mConnectionLostHandler;
     private ConnectionFailureHandler mConnectionFailureHandler;
     private boolean mRun;
-    private PrintWriter mBufferOut;
-    private BufferedReader mBufferIn;
+    private DataInputStream mIn;
+    private DataOutputStream mOut;
+    //private PrintWriter mWriter;
+    //private BufferedReader mReader;
 
 
     // Private constructor prevents initialization from other classes
@@ -47,8 +53,10 @@ public class TcpClient {
         mConnectionLostHandler = null;
         mConnectionFailureHandler = null;
         mRun = false;
-        mBufferOut = null;
-        mBufferIn = null;
+        //mWriter = null;
+        //mReader = null;
+        mIn = null;
+        mOut = null;
     }
 
     private static class ConnectionHolder {
@@ -128,24 +136,82 @@ public class TcpClient {
         return connected;
     }
 
+    /*
     public void sendMessage(String message){
         Log.d(TAG, "sendMessage(" + message + ")");
 
-        Assert.assertNotNull(mBufferOut);
-        if (!mBufferOut.checkError()) {
-            mBufferOut.print(message);
-            mBufferOut.flush();
+        Assert.assertNotNull(mWriter);
+        if (!mWriter.checkError()) {
+            mWriter.print(message);
+            mWriter.flush();
         }else {
-            Log.e(TAG, "mBufferOut.checkError() returns true");
+            Log.e(TAG, "mWriter.checkError() returns true");
             mConnectionLostHandler.onConnectionLost("Lost connection to server");
         }
+    }*/
+
+    public void sendMessage(Packet message) throws IOException{
+        Log.d(TAG, "sendMessage(Packet)");
+
+        Assert.assertNotNull("mOut is null", mOut);
+        Assert.assertNotNull("Packet is null", message);
+        Assert.assertTrue("Negative packet data length", message.mDataLength >= 0);
+
+        mOut.writeShort(message.mDataLength);
+        mOut.writeByte(message.mType);
+        mOut.write(message.mData);
+        mOut.flush();
     }
 
-    public void send(){
 
+    public Packet receive() throws IOException{
+        Log.d(TAG, "receive()");
+        Assert.assertNotNull("mIn (DataInputStream) is null", mIn);
+
+        Packet packet = new Packet(mIn.readShort());
+        Log.d(TAG, "Data Length = " + packet.mDataLength);
+        packet.mType = mIn.readByte();
+        Log.d(TAG, "Packet Type = " + packet.mType);
+
+        if (packet.mDataLength > 0) {
+            int nBytes = mIn.read(packet.mData);
+            Log.d(TAG, "read " + nBytes + " bytes");
+        }
+        return packet;
     }
 
     public void run() {
+        Log.d(TAG, "run()");
+
+        Assert.assertNotNull("Socket Object is null, make sure the connection "
+                + "to server is established before invoking run()", mSocket);
+
+        Assert.assertNotNull("MessageReceivedHandler is null", mMessageHandler);
+
+        try {
+            mIn = new DataInputStream(new BufferedInputStream(mSocket.getInputStream()));
+            mOut = new DataOutputStream((new BufferedOutputStream(mSocket.getOutputStream())));
+            mRun = true;
+
+            while (mRun) {
+                if (isConnected()) {
+                    Packet packet = receive();
+                    mMessageHandler.onMessageReceived(packet);
+                } else {
+                    mConnectionLostHandler.onConnectionLost("socket is not connected");
+                }
+            }
+        } catch(SocketException e){
+            Log.d(TAG, e.getMessage());
+            if (isConnected()) { close(); }
+        } catch (IOException e){
+            e.printStackTrace();
+            if (isConnected()) { close(); }
+        }
+    }
+
+/*
+    public void run2() {
         Log.d(TAG, "run()");
 
         Assert.assertNotNull("Socket Object is null, make sure the connection "
@@ -154,17 +220,19 @@ public class TcpClient {
         Assert.assertNotNull("MessageReceivedHandler is null", mMessageHandler);
 
         try {
-            mBufferOut = new PrintWriter(new BufferedWriter( new OutputStreamWriter(
+            mWriter = new PrintWriter(new BufferedWriter( new OutputStreamWriter(
                     mSocket.getOutputStream())), true);
-            mBufferIn = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+            mReader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+            mIn = new DataInputStream(new BufferedInputStream(mSocket.getInputStream()));
+            mOut = new DataOutputStream((new BufferedOutputStream(mSocket.getOutputStream())));
             mRun = true;
 
             while (mRun) {
                 if (isConnected()) {
-                    String msgReceived = mBufferIn.readLine();
+                    String msgReceived = mReader.readLine();
                     if (msgReceived != null) {
                         Log.i(TAG, "[Server]: " + msgReceived);
-                        mMessageHandler.onMessageReceived(msgReceived);
+                        //mMessageHandler.onMessageReceived(msgReceived);
                     }else {
                         Log.d(TAG, "msgReceived = null");
                     }
@@ -180,6 +248,7 @@ public class TcpClient {
             if (isConnected()) { close(); }
         }
     }
+*/
 
     public void close() {
         Log.d(TAG, "close()");
@@ -198,14 +267,33 @@ public class TcpClient {
             }
         }
 
-        if (mBufferOut != null){
-            mBufferOut.flush();
-            mBufferOut.close();
+        if (mIn != null) {
+            try {
+                mIn.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
 
+        if (mOut != null) {
+            try{
+                mOut.flush();
+                mOut.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        /*if (mWriter != null){
+            mWriter.flush();
+            mWriter.close();
+        }*/
+
         mSocket = null;
-        mBufferIn = null;
-        mBufferOut = null;
+        mIn = null;
+        mOut = null;
+        //mReader = null;
+        //mWriter = null;
         mConnectionFailureHandler = null;
         mConnectionLostHandler = null;
         mMessageHandler = null;
@@ -224,24 +312,15 @@ public class TcpClient {
         For debug purpose only, remove this later
     */
     private void printLocalInfo() {
-
-/*            if (mSocket.getLocalSocketAddress() == null){
-            Log.d(TAG, "mSocket.getLocalSocketAddress() == null");
-        }*/
-        /*Log.d(TAG, "InetAddress.getLocalHost().getHostName()" + InetAddress.getLocalHost().getHostName());
-        Log.d(TAG, "InetAddress.getLocalHost().getHostAddress()" + InetAddress.getLocalHost().getHostAddress());
-        Log.d(TAG, "Inet4Address.getLocalHost().getHostName()" + Inet4Address.getLocalHost().getHostName());
-        Log.d(TAG, "Inet4Address.getLocalHost().getHostAddress()" + Inet4Address.getLocalHost().getHostAddress());*/
         if (mSocket != null) {
             Log.d(TAG, "mSocket.getLocalAddress().getHostAddress()" + mSocket.getLocalAddress().getHostAddress());
             Log.d(TAG, "mSocket.getLocalAddress().getHostName()" + mSocket.getLocalAddress().getHostName());
             //Log.d(TAG, "mSocket.getLocalSocketAddress()" + mSocket.getLocalSocketAddress());
         }
-
     }
 
-    public interface MessageReceivedHandler {
-        void onMessageReceived(String message);
+    public interface MessageReceivedHandler <MessageType> {
+        void onMessageReceived(MessageType message);
     }
 
     public interface ConnectionLostHandler {

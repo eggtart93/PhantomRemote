@@ -15,18 +15,25 @@ import android.widget.TextView;
 
 import junit.framework.Assert;
 
+import java.io.IOException;
+
 /**
  * Created by Jin on 2016/1/5.
  */
 public class ControllerUI extends Activity {
 
     private static final String TAG = "ControllerUI";
+    static final String INVALID_RESPONSE = "Invalid Response";
+    static final String DEBUG_MESSAGE = "Debug Message";
+
+
     private StringBuilder mStrBuilder;
     private TextView mTextView, mStatusTextView, mResponseTextView;
     private Button mForwardButton, mReverseButton, mLeftButton, mRightButton;
     private SensorManager mSensorManager;
     private AccelerometerListener mAccListener;
     private TcpClient mTcpClient;
+    private Controller mController;
 
 
     @Override
@@ -52,8 +59,13 @@ public class ControllerUI extends Activity {
         mForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage("Forward CMD");
+                if (mTcpClient != null && mController != null) {
+                    try {
+                        mTcpClient.sendMessage(mController.generatePacket(Controller.FORWARD_SIGNAL));
+                    }catch (IOException e){
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -61,8 +73,13 @@ public class ControllerUI extends Activity {
         mReverseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage("Reverse CMD");
+                if (mTcpClient != null && mController != null) {
+                    try {
+                        mTcpClient.sendMessage(mController.generatePacket(Controller.REVERSE_SIGNAL));
+                    }catch (IOException e){
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -70,8 +87,13 @@ public class ControllerUI extends Activity {
         mLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage("Left CMD");
+                if (mTcpClient != null && mController != null) {
+                    try {
+                        mTcpClient.sendMessage(mController.generatePacket(Controller.LEFT_SIGNAL));
+                    }catch (IOException e){
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -79,13 +101,19 @@ public class ControllerUI extends Activity {
         mRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage("Right CMD");
+                if (mTcpClient != null && mController != null) {
+                    try {
+                        mTcpClient.sendMessage(mController.generatePacket(Controller.RIGHT_SIGNAL));
+                    }catch (IOException e){
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
             }
         });
 
         mStatusTextView.setText("Status: Connected To Server");
+        mController = new Controller();
         new ServerMonitorTask().execute("");
     }
 
@@ -150,10 +178,11 @@ public class ControllerUI extends Activity {
             Log.d(TAG, "doInBackground()");
 
             mTcpClient = TcpClient.getInstance();
-            mTcpClient.setMessageReceivedHandler(new TcpClient.MessageReceivedHandler() {
+            mTcpClient.setMessageReceivedHandler(new TcpClient.MessageReceivedHandler<Packet>() {
                 @Override
-                public void onMessageReceived(String message) {
-                    String[] progress = {"onMessageReceived", message};
+                public void onMessageReceived(Packet message) {
+                    String[] progress = mController.processPacket(message);
+                    //String[] progress = {"onMessageReceived", message};
                     publishProgress(progress);
                 }
             });
@@ -179,7 +208,7 @@ public class ControllerUI extends Activity {
             Assert.assertTrue(progress.length == 2);
 
             switch (progress[0]){
-                case "onMessageReceived":
+                case DEBUG_MESSAGE:
                     Assert.assertNotNull("mStrBuilder is null", mStrBuilder);
 
                     mStrBuilder.setLength(0);
@@ -189,7 +218,7 @@ public class ControllerUI extends Activity {
                     mResponseTextView.setText(mStrBuilder.toString());
                     break;
 
-                case "onConnectionLost":
+                case INVALID_RESPONSE:
                     mStatusTextView.setText(progress[1]);
                     mStatusTextView.setTextColor(Color.RED);
                     break;

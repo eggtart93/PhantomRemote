@@ -6,14 +6,9 @@ import junit.framework.Assert;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -41,11 +36,8 @@ public class TcpClient {
     private boolean mRun;
     private DataInputStream mIn;
     private DataOutputStream mOut;
-    //private PrintWriter mWriter;
-    //private BufferedReader mReader;
 
-
-    // Private constructor prevents initialization from other classes
+    /* Private constructor prevents initialization from other classes */
     private TcpClient() {
         // Creates an unconnected socket object
         mSocket = null;
@@ -53,8 +45,6 @@ public class TcpClient {
         mConnectionLostHandler = null;
         mConnectionFailureHandler = null;
         mRun = false;
-        //mWriter = null;
-        //mReader = null;
         mIn = null;
         mOut = null;
     }
@@ -136,20 +126,6 @@ public class TcpClient {
         return connected;
     }
 
-    /*
-    public void sendMessage(String message){
-        Log.d(TAG, "sendMessage(" + message + ")");
-
-        Assert.assertNotNull(mWriter);
-        if (!mWriter.checkError()) {
-            mWriter.print(message);
-            mWriter.flush();
-        }else {
-            Log.e(TAG, "mWriter.checkError() returns true");
-            mConnectionLostHandler.onConnectionLost("Lost connection to server");
-        }
-    }*/
-
     public void sendMessage(Packet message) throws IOException{
         Log.d(TAG, "sendMessage(Packet)");
 
@@ -210,46 +186,6 @@ public class TcpClient {
         }
     }
 
-/*
-    public void run2() {
-        Log.d(TAG, "run()");
-
-        Assert.assertNotNull("Socket Object is null, make sure the connection "
-                        + "to server is established before invoking run()", mSocket);
-
-        Assert.assertNotNull("MessageReceivedHandler is null", mMessageHandler);
-
-        try {
-            mWriter = new PrintWriter(new BufferedWriter( new OutputStreamWriter(
-                    mSocket.getOutputStream())), true);
-            mReader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-            mIn = new DataInputStream(new BufferedInputStream(mSocket.getInputStream()));
-            mOut = new DataOutputStream((new BufferedOutputStream(mSocket.getOutputStream())));
-            mRun = true;
-
-            while (mRun) {
-                if (isConnected()) {
-                    String msgReceived = mReader.readLine();
-                    if (msgReceived != null) {
-                        Log.i(TAG, "[Server]: " + msgReceived);
-                        //mMessageHandler.onMessageReceived(msgReceived);
-                    }else {
-                        Log.d(TAG, "msgReceived = null");
-                    }
-                } else {
-                    mConnectionLostHandler.onConnectionLost("socket is not connected");
-                }
-            }
-        } catch(SocketException e){
-            Log.d(TAG, e.getMessage());
-            if (isConnected()) { close(); }
-        } catch (IOException e){
-            e.printStackTrace();
-            if (isConnected()) { close(); }
-        }
-    }
-*/
-
     public void close() {
         Log.d(TAG, "close()");
 
@@ -284,16 +220,9 @@ public class TcpClient {
             }
         }
 
-        /*if (mWriter != null){
-            mWriter.flush();
-            mWriter.close();
-        }*/
-
         mSocket = null;
         mIn = null;
         mOut = null;
-        //mReader = null;
-        //mWriter = null;
         mConnectionFailureHandler = null;
         mConnectionLostHandler = null;
         mMessageHandler = null;

@@ -13,12 +13,24 @@ public class Controller {
     public static final byte REVERSE_SIGNAL = (byte) 0xF1;
     public static final byte LEFT_SIGNAL = (byte) 0xF2;
     public static final byte RIGHT_SIGNAL = (byte) 0xF3;
-    public static final byte SHUTDOWN_SIGNAL = (byte) 0xFF;
+    public static final byte STOP_SIGNAL = (byte) 0xF4;
+
+    public static final byte SHUTDOWN_SIGNAL = (byte) 0xDF;
+    public static final byte SYSTEM_CMD_SIGNAL = (byte) 0xD0;
 
     public static final byte DEBUG_TEXT = (byte) 0x10;
     public static final byte DEBUG_INT = (byte) 0x11;
 
-    public Packet generatePacket(byte signalType) {
+    /*
+        Overloaded method of generatePacket(byte,String) to make the second parameter
+        optional, therefore all existing method calls of generatePacket(byte) does not
+        need to be changed.
+     */
+    public Packet generatePacket(byte signalType){
+        return generatePacket(signalType, "");
+    }
+
+    public Packet generatePacket(byte signalType, String param) {
         Packet packet = null;
 
         switch (signalType){
@@ -34,9 +46,14 @@ public class Controller {
             case RIGHT_SIGNAL:
                 packet = new Packet(RIGHT_SIGNAL, "Right");
                 break;
+            case STOP_SIGNAL:
+                packet = new Packet(STOP_SIGNAL, "Stop");
+                break;
             case SHUTDOWN_SIGNAL:
                 packet = new Packet(SHUTDOWN_SIGNAL, "Shutdown");
                 break;
+            case SYSTEM_CMD_SIGNAL:
+                packet = new Packet(SYSTEM_CMD_SIGNAL, param);
             default:
                 Log.e(TAG, "Unknown signal type");
         }

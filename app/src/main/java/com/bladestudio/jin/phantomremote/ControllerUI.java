@@ -28,8 +28,8 @@ public class ControllerUI extends Activity {
 
 
     private StringBuilder mStrBuilder;
-    private TextView mTextView, mStatusTextView, mResponseTextView;
-    private Button mForwardButton, mReverseButton, mLeftButton, mRightButton;
+    private TextView mStatusTextView, mResponseTextView;
+    private Button mForwardButton, mReverseButton, mLeftButton, mRightButton, mStopButton;
     private SensorManager mSensorManager;
     private AccelerometerListener mAccListener;
     private TcpClient mTcpClient;
@@ -50,6 +50,7 @@ public class ControllerUI extends Activity {
         mReverseButton = (Button) findViewById(R.id.reverse_button);
         mLeftButton = (Button) findViewById(R.id.left_button);
         mRightButton = (Button) findViewById(R.id.right_button);
+        mStopButton = (Button) findViewById(R.id.stop_button);
 
         mStrBuilder = new StringBuilder();
 
@@ -112,7 +113,21 @@ public class ControllerUI extends Activity {
             }
         });
 
-        mStatusTextView.setText("Status: Connected To Server");
+        mStopButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (mTcpClient != null && mController != null) {
+                    try {
+                        mTcpClient.sendMessage(mController.generatePacket(Controller.STOP_SIGNAL));
+                    }catch (IOException e){
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        //mStatusTextView.setText("Status: Connected To Server");
         mController = new Controller();
         new ServerMonitorTask().execute("");
     }
@@ -160,7 +175,7 @@ public class ControllerUI extends Activity {
                 mStrBuilder.append(event.values[1]);
                 mStrBuilder.append(",\n\tz: ");
                 mStrBuilder.append(event.values[2]);
-                mTextView.setText(mStrBuilder.toString());
+                //mTextView.setText(mStrBuilder.toString());
             }
         }
 

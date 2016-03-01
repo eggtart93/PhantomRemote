@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -11,7 +12,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.bladestudio.jin.phantomremote.MainActivity"
     tools:showIn="@layout/activity_main"
-    android:background="#21252b">
+    android:background="@color/colorPrimaryDark">
 
     <EditText
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
         android:layout_below="@+id/ip_label"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#e2e2e2" />
+        android:textColor="@color/colorPrimaryWhite" />
 
     <EditText
         android:layout_width="match_parent"
@@ -36,7 +37,7 @@
         android:layout_below="@+id/port_label"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#e2e2e2" />
+        android:textColor="@color/colorPrimaryWhite" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -69,7 +70,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textStyle="bold"
-        android:textColor="#05cf85" />
+        android:textColor="@color/colorLightGreen" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -79,7 +80,7 @@
         android:id="@+id/port_label"
         android:layout_marginTop="24dp"
         android:layout_below="@+id/edit_address"
-        android:textColor="#05cf85"
+        android:textColor="@color/colorLightGreen"
         android:textStyle="bold" />
 
     <TextView
@@ -88,7 +89,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/gyro_data_view"
         android:layout_marginTop="1dp"
-        android:textColor="#ff4181"
+        android:textColor="@color/colorLightGreen"
         android:layout_below="@+id/message_textview"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -98,7 +99,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/accel_data_view"
-        android:textColor="#00a2f3"
+        android:textColor="@color/colorLightBlue"
         android:layout_marginTop="1dp"
         android:layout_below="@+id/gyro_data_view"
         android:layout_alignParentLeft="true"

@@ -1,18 +1,18 @@
 <resources>
     <string name="app_name">Phantom Remote</string>
     <string name="action_settings">Settings</string>
-    <string name="ctr_ui_label_status">Status</string>
-    <string name="ctr_ui_label_response">Response</string>
+    <string name="ctr_ui_label_status">Connection Status:</string>
+    <string name="ctr_ui_label_response">From Robot:</string>
     <string name="dialog_alert_text_lost_connection">Lost Connection To Robot</string>
     <string name="dialog_alert_btn_confirm">Back to connection page</string>
-    <string name="ctr_ui_center_default">Phantom</string>
+    <string name="ctr_ui_center_default">Ready</string>
     <string name="ctr_ui_btn_forward">F</string>
     <string name="ctr_ui_btn_backward">B</string>
     <string name="ctr_ui_btn_left">L</string>
     <string name="ctr_ui_btn_right">R</string>
     <string name="ctr_ui_btn_stop">STOP</string>
     <string name="ctr_ui_switch_sensor_enable">Detection Enable</string>
-    <string name="ctr_ui_text_status_connected">Connected to Robot</string>
+    <string name="ctr_ui_text_status_connected">Connected</string>
     <string name="main_ui_hint_edit_address">Enter IP Address</string>
     <string name="main_ui_hint_edit_port">Enter Port Number</string>
     <string name="main_ui_label_edit_address">Robot IP:</string>
@@ -22,5 +22,7 @@
     <string name="main_ui_btn_connect">Connect Robot</string>
     <string name="main_ui_text_status_connecting">Connecting &#8230;</string>
     <string name="main_ui_text_error_ip_port_empty">Host name/IP or Port number cannot be empty</string>
-    <string name="toast_error_lost_connection">Lost connection to robot, now exiting &#8230;</string>
+    <string name="main_ui_text_error_invalid_port_format">Invalid port number format, it should be an integer e.g. 1234</string>
+    <string name="toast_error_lost_connection">Lost connection to robot, please reconnect &#8230;</string>
+    <string name="toast_success_connect_completed">Connection established successfully!</string>
 </resources>

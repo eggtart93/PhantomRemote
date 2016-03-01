@@ -28,7 +28,7 @@ public class TcpClient {
      */
 
     private static final String TAG = "TcpClient";
-    private static final int TIMEOUT = 5000; // Default timeout 5 sec
+    private static final int MIN_TIMEOUT = 1500; // Default minimum timeout 1.5 sec
     private Socket mSocket;
     private MessageReceivedHandler<Packet> mMessageHandler;
     private ConnectionLostHandler mConnectionLostHandler;
@@ -78,16 +78,17 @@ public class TcpClient {
         return mConnectionFailureHandler;
     }
 
-    public boolean connect(String dstHost, int dstPort){
+    public boolean connect(String dstHost, int dstPort, int timeout){
         Log.d(TAG, "Connects to <" + dstHost + "> <" + dstPort + ">");
 
+        timeout = timeout < MIN_TIMEOUT ? MIN_TIMEOUT : timeout;
         boolean connected = true;
         try {
             mSocket = new Socket();
             // set socket read timeout
-            // mSocket.setSoTimeout(TIMEOUT);
+            // mSocket.setSoTimeout(MIN_TIMEOUT);
             // connect to server with specified timeout
-            mSocket.connect(new InetSocketAddress(dstHost, dstPort), TIMEOUT);
+            mSocket.connect(new InetSocketAddress(dstHost, dstPort), timeout);
             printLocalInfo();
         }catch(SocketTimeoutException e) {
             Log.e(TAG, e.getMessage());
@@ -181,6 +182,8 @@ public class TcpClient {
         }
     }
 
+    public void stop(){ mRun = false; }
+
     public void close() {
         Log.d(TAG, "close()");
 
@@ -189,7 +192,6 @@ public class TcpClient {
             Notify the server that this client is closing
          */
 
-        mRun = false;
         if (mSocket != null) {
             try {
                 mSocket.close();

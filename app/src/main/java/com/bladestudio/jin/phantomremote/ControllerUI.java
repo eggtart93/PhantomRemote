@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Gravity;
 
 import junit.framework.Assert;
 
@@ -31,6 +32,7 @@ public class ControllerUI extends Activity {
     private TcpClient mTcpClient;
     private Controller mController;
     private MotionDetector mMotionDetector;
+    private ServerMonitorTask mMonitorTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,18 +55,24 @@ public class ControllerUI extends Activity {
         mSensorEnable = (Switch) findViewById(R.id.sensor_enable);
         mStrBuilder = new StringBuilder();
 
+        mTcpClient = TcpClient.getInstance();
+        mController = new Controller();
+        mMotionDetector = new MotionDetector(this);
+        mMonitorTask = new ServerMonitorTask();
+
         mSensorEnable.setChecked(false);
         mSensorEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mMotionDetector != null) {
                     if (isChecked) mMotionDetector.register();
-                    else mMotionDetector.unregister();
+                    else {
+                        mMotionDetector.unregister();
+                        mMotionTextView.setText(getResources().getString(R.string.ctr_ui_center_default));
+                    }
                 }
             }
         });
-
-        mMotionDetector = new MotionDetector(this);
 
         mMotionDetector.setHandler(new MotionChangeHandler() {
             @Override
@@ -173,8 +181,7 @@ public class ControllerUI extends Activity {
             }
         });
 
-        mController = new Controller();
-        new ServerMonitorTask().execute("");
+        mMonitorTask.execute("");
     }
 
     @Override
@@ -205,9 +212,7 @@ public class ControllerUI extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        if (mTcpClient != null) {
-            mTcpClient.close();
-        }
+        mTcpClient.close();
     }
 
     @Override
@@ -222,7 +227,6 @@ public class ControllerUI extends Activity {
         protected TcpClient doInBackground(String... messages) {
             Log.d(TAG, "doInBackground()");
 
-            mTcpClient = TcpClient.getInstance();
             mTcpClient.setMessageReceivedHandler(new TcpClient.MessageReceivedHandler<Packet>() {
                 @Override
                 public void onMessageReceived(Packet message) {
@@ -236,12 +240,11 @@ public class ControllerUI extends Activity {
                 public void onConnectionLost(String info) {
                     String[] progress = {CONNECTION_ERROR, info};
                     publishProgress(progress);
-                    mTcpClient.close();
+                    mTcpClient.stop();
                 }
             });
 
             mTcpClient.run();
-
             return null;
         }
 
@@ -256,28 +259,33 @@ public class ControllerUI extends Activity {
                     Assert.assertNotNull("mStrBuilder is null", mStrBuilder);
 
                     mStrBuilder.setLength(0);
-                    mStrBuilder.append("Received");
-                    mStrBuilder.append(": ");
+                    //mStrBuilder.append("Received");
+                    //mStrBuilder.append(": ");
                     mStrBuilder.append(progress[1]);
                     mResponseTextView.setText(mStrBuilder.toString());
                     break;
 
                 case INVALID_RESPONSE:
                 case CONNECTION_ERROR:
-                    //mStatusTextView.setText(progress[1]);
-                    //mStatusTextView.setTextColor(Color.RED);
-                    Toast.makeText(getApplicationContext(), progress[1], Toast.LENGTH_LONG).show();
+                    Toast toast = Toast.makeText(getApplicationContext(), progress[1], Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
                     break;
                 default:
                     Log.e(TAG, "Error progress type");
             }
-
         }
 
         @Override
         protected void onPostExecute(TcpClient result) {
             Log.d(TAG, "onPostExecute");
+            //mTcpClient.close();
             ControllerUI.this.finish();
+        }
+
+        @Override
+        protected void onCancelled(TcpClient result){
+            Log.d(TAG, "onCancelled");
         }
     }
 }

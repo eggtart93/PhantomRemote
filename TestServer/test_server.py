@@ -6,7 +6,7 @@ import socket
 from struct import *
 
 server = socket.socket()
-host = socket.gethostname()
+host = ""#socket.gethostname()
 port = 8080
 interactive = False
 
@@ -40,7 +40,7 @@ while 1:
             print "Packet Data:", data[3:]
             #client.send("Message Received (%d bytes)\n" % (len(data)));
             
-            msg = "Hello Client"
+            msg = "Echo msg %d" % (header[1])
             packet = pack("!hB%ds" % (len(msg)), len(msg), 0x10, msg)
             client.sendall(packet)
             print "Server: Message sent. (%d bytes)" % (len(packet))

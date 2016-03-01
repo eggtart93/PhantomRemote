@@ -1,95 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical"
+    android:background="#21252b"
+    android:gravity="center">
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reverse"
-        android:id="@+id/reverse_button"
-        android:layout_below="@+id/right_button"
-        android:layout_alignLeft="@+id/stop_button"
-        android:layout_alignStart="@+id/stop_button" />
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="0.5">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="@string/ctr_ui_label_status"
+                android:id="@+id/status_label"
+                android:textColor="#e2e2e2" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Left"
-        android:id="@+id/left_button"
-        android:layout_below="@+id/forward_button"
-        android:layout_toLeftOf="@+id/forward_button"
-        android:layout_toStartOf="@+id/forward_button" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text=""
+                android:id="@+id/status_textview"
+                android:textColor="#05cf85" />
+        </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Forward"
-        android:id="@+id/forward_button"
-        android:layout_above="@+id/stop_button"
-        android:layout_alignRight="@+id/stop_button"
-        android:layout_alignEnd="@+id/stop_button" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Right"
-        android:id="@+id/right_button"
-        android:layout_alignTop="@+id/stop_button"
-        android:layout_toRightOf="@+id/stop_button"
-        android:layout_toEndOf="@+id/stop_button" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="0.5">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text="@string/ctr_ui_label_response"
+                android:id="@+id/response_label"
+                android:textColor="#e2e2e2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:text=""
+                android:id="@+id/response_textview"
+                android:textColor="#05cf85" />
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Status:"
-        android:id="@+id/status_textview"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:id="@+id/motion_textview"
+        android:textSize="60sp"
+        android:textColor="#ff4181"
+        android:layout_marginBottom="15dp"
+        android:text="@string/ctr_ui_center_default"
+        android:layout_weight="1"
+        android:gravity="bottom"
         android:textStyle="bold"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:typeface="serif" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Response:"
-        android:id="@+id/response_textview"
-        android:layout_below="@+id/status_textview"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="24dp"
-        android:textColor="#00aa00" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="STOP"
-        android:id="@+id/stop_button"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rowCount="3"
+            android:columnCount="3"
+            android:layout_weight="0.9">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/send_cmd_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:src="@android:drawable/ic_menu_send"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp" />
+            <Button
+                android:layout_row="0"
+                android:layout_column="1"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="@string/ctr_ui_btn_forward"
+                android:id="@+id/forward_button"
+                android:textStyle="bold"
+                android:textColor="#05cf85" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_alignBottom="@+id/send_cmd_button"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/send_cmd_button"
-        android:layout_toStartOf="@+id/send_cmd_button"
-        android:hint="Enter SYS CMD" />
+            <Button
+                android:layout_row="2"
+                android:layout_column="1"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="@string/ctr_ui_btn_backward"
+                android:id="@+id/reverse_button"
+                android:textStyle="bold"
+                android:textColor="#05cf85" />
 
-</RelativeLayout>
+            <Button
+                android:layout_row="1"
+                android:layout_column="0"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="@string/ctr_ui_btn_left"
+                android:id="@+id/left_button"
+                android:textColor="#05cf85"
+                android:textStyle="bold" />
+
+            <Button
+                android:layout_row="1"
+                android:layout_column="2"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:text="@string/ctr_ui_btn_right"
+                android:id="@+id/right_button"
+                android:textColor="#05cf85"
+                android:textStyle="bold" />
+
+            <Button
+                android:layout_row="1"
+                android:layout_column="1"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="@string/ctr_ui_btn_stop"
+                android:id="@+id/stop_button"
+                style="@style/Base.Widget.AppCompat.Button.Colored"
+                android:textStyle="bold" />
+        </GridLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center_vertical|bottom"
+            android:layout_weight="0.1">
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ctr_ui_switch_sensor_enable"
+                android:id="@+id/sensor_enable"
+                android:checked="false"
+                android:textColor="#05cf85"
+                android:textStyle="bold"
+                style="@style/Base.Widget.AppCompat.Button.Borderless" />
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New ToggleButton"
+                android:id="@+id/toggleButton"
+                android:textStyle="bold"
+                android:textColor="#05cf85" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

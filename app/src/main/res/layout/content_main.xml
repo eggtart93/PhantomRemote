@@ -10,71 +10,98 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.bladestudio.jin.phantomremote.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:background="#21252b">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_address"
-        android:editable="true"
-        android:hint="Enter IP Address"
+        android:hint="@string/main_ui_hint_edit_address"
         android:maxLines="1"
-        android:text="192.168.43.48"
+        android:text="@string/main_ui_text_edit_address"
         android:layout_below="@+id/ip_label"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#e2e2e2" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_port"
-        android:editable="true"
-        android:hint="Enter Port Number"
+        android:hint="@string/main_ui_hint_edit_port"
         android:maxLines="1"
         android:inputType="number|numberDecimal"
-        android:text="8080"
+        android:text="@string/main_ui_text_edit_port"
         android:layout_below="@+id/port_label"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#e2e2e2" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/message_textview"
-        android:editable="false"
         android:gravity="center_horizontal"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:layout_below="@+id/edit_port"
         android:layout_marginTop="5dp" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect Device"
+        android:text="@string/main_ui_btn_connect"
         android:id="@+id/connect_button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="118dp" />
+        android:layout_marginBottom="118dp"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Server IP:"
+        android:text="@string/main_ui_label_edit_address"
         android:id="@+id/ip_label"
         android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textStyle="bold"
+        android:textColor="#05cf85" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/main_ui_label_edit_port"
+        android:id="@+id/port_label"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/edit_address"
+        android:textColor="#05cf85"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/gyro_data_view"
+        android:layout_marginTop="1dp"
+        android:textColor="#ff4181"
+        android:layout_below="@+id/message_textview"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Server Port:"
-        android:id="@+id/port_label"
-        android:layout_marginTop="24dp"
-        android:layout_below="@+id/edit_address" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/accel_data_view"
+        android:textColor="#00a2f3"
+        android:layout_marginTop="1dp"
+        android:layout_below="@+id/gyro_data_view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

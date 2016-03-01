@@ -62,7 +62,7 @@ public class TcpClient {
         return ConnectionHolder.mConnection;
     }
 
-    public void setMessageReceivedHandler(MessageReceivedHandler handler){
+    public void setMessageReceivedHandler(MessageReceivedHandler<Packet> handler){
         mMessageHandler = handler;
     }
 
@@ -76,14 +76,6 @@ public class TcpClient {
 
     public ConnectionFailureHandler getConnectionFailureHandler() {
         return mConnectionFailureHandler;
-    }
-
-    public ConnectionLostHandler getConnectionLostHandler() {
-        return mConnectionLostHandler;
-    }
-
-    public MessageReceivedHandler getMessageHandler() {
-        return mMessageHandler;
     }
 
     public boolean connect(String dstHost, int dstPort){
@@ -128,15 +120,16 @@ public class TcpClient {
 
     public void sendMessage(Packet message) throws IOException{
         Log.d(TAG, "sendMessage(Packet)");
+        if (mRun) {
+            Assert.assertNotNull("mOut is null", mOut);
+            Assert.assertNotNull("Packet is null", message);
+            Assert.assertTrue("Negative packet data length", message.mDataLength >= 0);
 
-        Assert.assertNotNull("mOut is null", mOut);
-        Assert.assertNotNull("Packet is null", message);
-        Assert.assertTrue("Negative packet data length", message.mDataLength >= 0);
-
-        mOut.writeShort(message.mDataLength);
-        mOut.writeByte(message.mType);
-        mOut.write(message.mData);
-        mOut.flush();
+            mOut.writeShort(message.mDataLength);
+            mOut.writeByte(message.mType);
+            mOut.write(message.mData);
+            mOut.flush();
+        }
     }
 
 
@@ -178,8 +171,10 @@ public class TcpClient {
                 }
             }
         } catch(SocketException e){
-            Log.d(TAG, e.getMessage());
-            if (isConnected()) { close(); }
+            Log.e(TAG, e.getMessage());
+            if (isConnected()) {
+                mConnectionLostHandler.onConnectionLost("Lost connection to Robot, exiting ...");
+            }
         } catch (IOException e){
             e.printStackTrace();
             if (isConnected()) { close(); }
@@ -232,11 +227,6 @@ public class TcpClient {
         return mSocket != null && mSocket.isConnected();
     }
 
-    public Socket getSocket() {
-        return mSocket;
-    }
-
-
     /*
         For debug purpose only, remove this later
     */
@@ -258,5 +248,45 @@ public class TcpClient {
 
     public interface ConnectionFailureHandler{
         void onConnectionFailure(String info);
+    }
+}
+
+class Packet {
+
+    /*
+        PACKET FORMAT:
+            | Data Length  | Type   | Data        |
+            | 2 bytes      | 1 byte | 1-255 bytes |
+     e.g
+    */
+
+    private static final short DEFAULT_DATA_LENGTH = 1024;
+
+    short mDataLength;
+    byte mType;
+    byte[] mData;
+
+    public Packet() {
+        mType = 0;
+        mDataLength = 0;
+        mData = new byte[DEFAULT_DATA_LENGTH];
+    }
+
+    public Packet(short size){
+        mType = 0;
+        mDataLength = size;
+        mData = new byte[size];
+    }
+
+    public Packet(byte type, int data) {
+        mType = type;
+        mData = Util.toBytes(data);
+        mDataLength = (short) mData.length;
+    }
+
+    public Packet(byte type, String data) {
+        mType = type;
+        mData = Util.toBytes(data);
+        mDataLength = (short) mData.length;
     }
 }

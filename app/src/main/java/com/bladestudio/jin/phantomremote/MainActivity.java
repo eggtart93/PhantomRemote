@@ -5,29 +5,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-/*
-import android.view.Menu;
-import android.view.MenuItem;
-*/
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "PhantomRemote";
-    private TextView mDisplayMsg;
+    private TextView mDisplayMsg, mGyroDataView, mAccDataView;
     private EditText mEditAddress, mEditPort;
-    private Button mConnectButton;
+    private MotionDetectorTest mMotionDetectorTest;
+    private boolean isDetectorEnabled;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +32,29 @@ public class MainActivity extends AppCompatActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         mEditAddress = (EditText) findViewById(R.id.edit_address);
         mEditPort = (EditText) findViewById(R.id.edit_port);
         mDisplayMsg = (TextView) findViewById(R.id.message_textview);
-        mConnectButton = (Button) findViewById(R.id.connect_button);
 
-        mConnectButton.setOnClickListener(new View.OnClickListener() {
+        mGyroDataView = (TextView) findViewById(R.id.accel_data_view);
+        mAccDataView = (TextView) findViewById(R.id.gyro_data_view);
+
+        isDetectorEnabled = false;
+
+        Button connectButton = (Button) findViewById(R.id.connect_button);
+        connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDisplayMsg.setText("Connecting...");
+                mDisplayMsg.setText(getResources().getString(R.string.main_ui_text_status_connecting));
                 mDisplayMsg.setTextColor(Color.BLUE);
+                MainActivity.this.findViewById(android.R.id.content).invalidate();
 
                 String host = mEditAddress.getText().toString();
                 int port = Integer.parseInt(mEditPort.getText().toString());
 
                 if (host.length() == 0 || port <= 0) {
-                    mDisplayMsg.setText("Host name/IP or Port number cannot be empty");
+                    mDisplayMsg.setText(getResources().getString(R.string.main_ui_text_error_ip_port_empty));
                     mDisplayMsg.setTextColor(Color.RED);
                     return;
                 }
@@ -82,9 +79,36 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if (!isDetectorEnabled) {
+                    if (mMotionDetectorTest == null) {
+                        mMotionDetectorTest = new MotionDetectorTest(MainActivity.this);
+                    }
+                    mMotionDetectorTest.registerAccelerometer(new MotionChangeHandler2() {
+                        @Override
+                        public void onMotionChanged(String data) {
+                            mAccDataView.setText(data);
+                        }
+                    });
+
+                    mMotionDetectorTest.registerGyroscope(new MotionChangeHandler2() {
+                        @Override
+                        public void onMotionChanged(String data) {
+                            mGyroDataView.setText(data);
+                        }
+                    });
+                } else {
+                    mMotionDetectorTest.unregister();
+                    mAccDataView.setText("");
+                    mGyroDataView.setText("");
+                }
+
+                isDetectorEnabled = !isDetectorEnabled;
+                /*
                 mDisplayMsg.setText("");
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                        */
             }
         });
     }
@@ -100,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         Log.d(TAG, "onPause()");
+        if (isDetectorEnabled && mMotionDetectorTest != null) {
+            mMotionDetectorTest.unregister();
+            isDetectorEnabled = false;
+        }
     }
 
     @Override
@@ -114,27 +142,5 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
     }
-
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_phantom_controller, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 }
+

@@ -83,19 +83,27 @@ public class ControllerUI extends Activity {
                 switch (motion) {
                     case MotionDetector.MOTION_FORWARD:
                         signal = Controller.FORWARD_SIGNAL;
-                        text = "Forward";
+                        text = getResources().getString(R.string.ctr_ui_text_motion_forward);
                         break;
                     case MotionDetector.MOTION_BACKWARD:
                         signal = Controller.REVERSE_SIGNAL;
-                        text = "Backward";
+                        text = getResources().getString(R.string.ctr_ui_text_motion_backward);
                         break;
                     case MotionDetector.MOTION_STOP:
                         signal = Controller.STOP_SIGNAL;
-                        text = "Stop";
+                        text = getResources().getString(R.string.ctr_ui_text_motion_stop);
+                        break;
+                    case MotionDetector.MOTION_LEFT:
+                        signal = Controller.LEFT_SIGNAL;
+                        text = getResources().getString(R.string.ctr_ui_text_motion_left);
+                        break;
+                    case MotionDetector.MOTION_RIGHT:
+                        signal = Controller.RIGHT_SIGNAL;
+                        text = getResources().getString(R.string.ctr_ui_text_motion_right);
                         break;
                     default:
                         signal = Controller.DEBUG_INT;
-                        text = "";
+                        text = getResources().getString(R.string.ctr_ui_text_motion_ready);
                         break;
                 }
 

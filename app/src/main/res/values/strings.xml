@@ -13,6 +13,12 @@
     <string name="ctr_ui_btn_stop">STOP</string>
     <string name="ctr_ui_switch_sensor_enable">Detection Enable</string>
     <string name="ctr_ui_text_status_connected">Connected</string>
+    <string name="ctr_ui_text_motion_ready">Ready</string>
+    <string name="ctr_ui_text_motion_stop">Stop</string>
+    <string name="ctr_ui_text_motion_forward">Forward</string>
+    <string name="ctr_ui_text_motion_backward">Backward</string>
+    <string name="ctr_ui_text_motion_right">Right</string>
+    <string name="ctr_ui_text_motion_left">Left</string>
     <string name="main_ui_hint_edit_address">Enter IP Address</string>
     <string name="main_ui_hint_edit_port">Enter Port Number</string>
     <string name="main_ui_label_edit_address">Robot IP:</string>

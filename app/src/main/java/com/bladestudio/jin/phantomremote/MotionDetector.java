@@ -15,19 +15,21 @@ public class MotionDetector {
     public static final int MOTION_STOP = 0xf0;
     public static final int MOTION_FORWARD = 0xf1;
     public static final int MOTION_BACKWARD = 0xf2;
+    public static final int MOTION_LEFT = 0xf3;
+    public static final int MOTION_RIGHT = 0xf4;
 
     private SensorManager mSensorMgr;
     private Sensor mSensor;
-    private AccelerometerListener mAccListener;
+    private AccelerometerListener mSensorListener;
     private MotionChangeHandler mHandler;
     private int mLastMotion;
     private float mDataBuffer[];
-    private final float THRESHOLD = 2.4f;
+    private final float THRESHOLD = 2.0f;
 
     public MotionDetector(Context app){
         mSensorMgr = (SensorManager) app.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mAccListener = new AccelerometerListener();
+        mSensorListener = new AccelerometerListener();
         mDataBuffer = new float[3];
         mLastMotion = MOTION_STOP;
     }
@@ -38,27 +40,27 @@ public class MotionDetector {
 
     public void register(){
         Log.d(TAG, "register()");
-        mSensorMgr.registerListener(mAccListener, mSensor, SensorManager.SENSOR_DELAY_GAME);
+        mSensorMgr.registerListener(mSensorListener, mSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     public void unregister(){
         Log.d(TAG, "unregister()");
-        mSensorMgr.unregisterListener(mAccListener);
+        mSensorMgr.unregisterListener(mSensorListener);
     }
 
     private boolean isMotionChanged(float[] vec3){
         boolean changed = false;
 
-        if (Math.abs(vec3[0] - mDataBuffer[0]) > THRESHOLD) {
-            mDataBuffer[0] = vec3[0];
-            changed = true;
-        }
-        if (Math.abs(vec3[2] - mDataBuffer[2]) > THRESHOLD) {
-            mDataBuffer[2] = vec3[2];
-            changed = true;
+        for(int i = 0; i < 3; ++i){
+            if (Math.abs(vec3[i] - mDataBuffer[i]) > THRESHOLD){
+                mDataBuffer[i] = vec3[i];
+                changed = true;
+                break;
+            }
         }
         return changed;
     }
+
 
     private class AccelerometerListener implements SensorEventListener {
         @Override
@@ -72,18 +74,24 @@ public class MotionDetector {
                float y = event.values[1];
                float z = event.values[2];
 
-               if (Math.abs(y) < 3.5 && x > -3.0f && x < 3.0f && z > 9.0f
+               if (Math.abs(y) < 2.5f && x > -3.0f && x < 3.0f && z > 9.0f
                        && mLastMotion != MOTION_FORWARD){
                    mHandler.onMotionChanged(MOTION_FORWARD);
                    mLastMotion = MOTION_FORWARD;
-               } else if (Math.abs(y) < 3.5 && x >= 3.0f && x <= 8.5f && z >= 4.0f && z <= 9.0f
+               } else if (Math.abs(y) < 2.5f && x >= 3.0f && x <= 8.5f && z >= 4.0f && z <= 9.0f
                        && mLastMotion != MOTION_STOP){
                    mHandler.onMotionChanged(MOTION_STOP);
                    mLastMotion = MOTION_STOP;
-               } else if (Math.abs(y) < 3.5 && x > 8.5f && z > -3.0f && z < 4.0f
+               } else if (Math.abs(y) < 2.5f && x > 8.5f && z > -3.0f && z < 4.0f
                        && mLastMotion != MOTION_BACKWARD) {
                    mHandler.onMotionChanged(MOTION_BACKWARD);
                    mLastMotion = MOTION_BACKWARD;
+               } else if (y <= -2.5f && mLastMotion != MOTION_LEFT) {
+                   mHandler.onMotionChanged(MOTION_LEFT);
+                   mLastMotion = MOTION_LEFT;
+               } else if (y >= 2.5f && mLastMotion != MOTION_RIGHT) {
+                   mHandler.onMotionChanged(MOTION_RIGHT);
+                   mLastMotion = MOTION_RIGHT;
                }
            }
 
@@ -91,6 +99,7 @@ public class MotionDetector {
            //Forward -3.0 < x < 3.0,   9.0 < z
            // stop   3.0 <= x <= 8.5  4.0 <= z <= 9.0;
            // back    8.5 < x < 10    -3.0 < z < 4.0
+           // left    y < -2.5
        }
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ToggleButton;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class ControllerUI extends Activity {
         Button leftButton = (Button) findViewById(R.id.left_button);
         Button rightButton = (Button) findViewById(R.id.right_button);
         Button stopButton = (Button) findViewById(R.id.stop_button);
+        //ToggleButton objDetectEnToggle = (ToggleButton) findViewById(R.id.obj_detect_en_toggle);
 
         mStatusTextView = (TextView) findViewById(R.id.status_textview);
         mResponseTextView = (TextView) findViewById(R.id.response_textview);

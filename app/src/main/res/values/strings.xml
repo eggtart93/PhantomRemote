@@ -23,7 +23,7 @@
     <string name="main_ui_hint_edit_port">Enter Port Number</string>
     <string name="main_ui_label_edit_address">Robot IP:</string>
     <string name="main_ui_label_edit_port">Robot Port:</string>
-    <string name="main_ui_text_edit_address">192.168.43.48</string>
+    <string name="main_ui_text_edit_address">192.168.43.61</string>
     <string name="main_ui_text_edit_port">8080</string>
     <string name="main_ui_btn_connect">Connect Robot</string>
     <string name="main_ui_text_status_connecting">Connecting &#8230;</string>

@@ -95,8 +95,8 @@
             <Button
                 android:layout_row="0"
                 android:layout_column="1"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="65dp"
+                android:layout_height="55dp"
                 android:text="@string/ctr_ui_btn_forward"
                 android:id="@+id/forward_button"
                 android:textStyle="bold"
@@ -105,8 +105,8 @@
             <Button
                 android:layout_row="2"
                 android:layout_column="1"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="65dp"
+                android:layout_height="55dp"
                 android:text="@string/ctr_ui_btn_backward"
                 android:id="@+id/reverse_button"
                 android:textStyle="bold"
@@ -115,8 +115,8 @@
             <Button
                 android:layout_row="1"
                 android:layout_column="0"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="65dp"
+                android:layout_height="55dp"
                 android:text="@string/ctr_ui_btn_left"
                 android:id="@+id/left_button"
                 android:textColor="@color/colorLightGreen"
@@ -125,8 +125,8 @@
             <Button
                 android:layout_row="1"
                 android:layout_column="2"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="65dp"
+                android:layout_height="55dp"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:text="@string/ctr_ui_btn_right"
@@ -137,8 +137,8 @@
             <Button
                 android:layout_row="1"
                 android:layout_column="1"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="65dp"
+                android:layout_height="55dp"
                 android:text="@string/ctr_ui_btn_stop"
                 android:id="@+id/stop_button"
                 style="@style/Base.Widget.AppCompat.Button.Colored"
@@ -167,7 +167,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="New ToggleButton"
-                android:id="@+id/toggleButton"
+                android:id="@+id/obj_detect_en_toggle"
                 android:textStyle="bold"
                 android:textColor="@color/colorLightGreen" />
         </LinearLayout>
